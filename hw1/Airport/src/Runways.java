@@ -30,48 +30,48 @@ public class Runways {
     public void setFreeToLand(boolean freeToLand) { m_freeToLand = freeToLand; }
     public void setFreeToTakeOff(boolean freeToTakeOff) { m_freeToTakeOff = freeToTakeOff; }
 
+    // handle previous event and schedule next event
     public AirportEvent handle(Event event) {
-        /*System.out.println("--------------");
-        for (AirportEvent e : m_waitToLand) {
-            System.out.println(e.getPlane().getName()+" waits to land at airport "+this.getName());
-        }
-        for (AirportEvent e : m_waitToTakeOff) {
-            System.out.println(e.getPlane().getName()+" waits to depart from airport " + this.getName());
-        }
-        */
 
+        // cast event to airevent
         AirportEvent airEvent = (AirportEvent)event;
+        // get the plane object of this airevent
         Airplane plane = airEvent.getPlane();
 
         switch(airEvent.getType()) {
+
+            // arrive -> land
             case AirportEvent.PLANE_ARRIVES:
 
+                // set the runway to land
                 plane.setRunway(this);
+
+                // declare a landedevent
                 AirportEvent landedEvent = new AirportEvent(m_airport.getRunwayTimeToLand(), m_airport, AirportEvent.PLANE_LANDED, plane);
                 System.out.println(String.format("%.2f",Simulator.getCurrentTime()) + ": "+ plane.getName()+" arrived at airport " + m_airport.getName());
 
+                // occupy the runway to land
                 m_freeToLand = false;
                 return landedEvent;
 
 
+            // land -> depart
             case AirportEvent.PLANE_LANDED:
 
-                // randomly choose the destination airport
-
-                //ArrayList<Airport> airportList = airportList(); global variable
-
+                // randomly choose the destination airport from global airportlist
                 Airport[] airportList = AirportSim.airportList;
                 int max = airportList.length;
 
-                Random rand = new Random();
+                Random rand = new Random(1);
                 int destination = rand.nextInt(max);
+                // select a different airport
                 while (m_airport == airportList[destination]){
                     destination = rand.nextInt(max);
                 }
                 plane.setDestination(airportList[destination]);
                 plane.setDepart(m_airport);
 
-                // stats on the number of passengers arriving
+                // set the number of passengers arriving to the airport
                 m_airport.setNumPassArrive(plane.getNumPassengers());
 
                 // calculate circling time

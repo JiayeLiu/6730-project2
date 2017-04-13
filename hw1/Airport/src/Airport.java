@@ -18,7 +18,6 @@ public class Airport implements EventHandler {
     final private double m_longitude;
     final private double m_latitude;
 
-    private double m_flightTime;
     private double m_runwayTimeToLand;
     private double m_requiredTimeOnGround;
     private double s_runwayTimeToLand;
@@ -63,14 +62,6 @@ public class Airport implements EventHandler {
     }
 
     public void handle(Event event) {
-        /*System.out.println("--------------");
-        for (AirportEvent e : m_waitToLand) {
-            System.out.println(e.getPlane().getName()+" waits to land at airport "+this.getName());
-        }
-        for (AirportEvent e : m_waitToTakeOff) {
-            System.out.println(e.getPlane().getName()+" waits to depart from airport " + this.getName());
-        }
-        */
 
         AirportEvent airEvent = (AirportEvent)event;
         Airplane plane = airEvent.getPlane();
@@ -83,9 +74,32 @@ public class Airport implements EventHandler {
 
                 plane.setArriveTime(Simulator.getCurrentTime());
 
-                int i;
+                int i = 0;
 
-                for (i=0; i<m_numRunways;i++){
+                while(!m_waitToLand.isEmpty() && i<m_numRunways) {
+
+                    // assign the empty runway to the plane in the first event in the landing queue
+                    AirportEvent toLandEvent = m_waitToLand.getFirst();
+
+
+                    runway = m_runwaylist[i];
+
+                    if(runway.getFreeToLand() && runway.getFreeToTakeOff()) {
+                        //
+                        toLandEvent.getPlane().setRunway(runway);
+                        Simulator.schedule(toLandEvent);
+
+                        debug = (toLandEvent.getPlane().getRunway() == null)?-1:toLandEvent.getPlane().getRunway().getId();
+                        System.out.println(toLandEvent.getPlane().getName() +" is on " + "lane" + debug);
+
+                        m_waitToLand.removeFirst();
+                        runway.setFreeToLand(false);
+                    }
+
+                    i++;
+                }
+
+                for (; i<m_numRunways;i++){
                     runway = m_runwaylist[i];
 
                     if(runway.getFreeToLand() && runway.getFreeToTakeOff()) {
@@ -136,7 +150,6 @@ public class Airport implements EventHandler {
                 else {
                     runway.setFreeToLand(true);
 
-                    //?????????? plane需不需要setrunway
                     if (!m_waitToTakeOff.isEmpty()){
                         // Let the first plane in the waiting list to take off
                         AirportEvent takeOffEvent = m_waitToTakeOff.getFirst();
@@ -161,7 +174,6 @@ public class Airport implements EventHandler {
                 runway = plane.getRunway();
                 debug = (plane.getRunway() == null)?-1:plane.getRunway().getId();
                 System.out.println(plane.getName() +" is on " + "lane" + debug);
-//                if (runway==null);
 
                 AirportEvent arriveEvent = runway.handle(airEvent);
                 Simulator.schedule(arriveEvent);
@@ -218,8 +230,6 @@ public class Airport implements EventHandler {
 
     public double getRequiredTimeOnGround() {return m_requiredTimeOnGround;}
 
-    public double getFlightTime() {return m_flightTime; }
-
     public int getWeather() {return m_weather;}
 
     public void setWeather(int weather) {
@@ -242,7 +252,10 @@ public class Airport implements EventHandler {
             for (int i=0; i<m_numRunways; i++){
                 m_runwaylist[i].setFreeToLand(false);
                 m_runwaylist[i].setFreeToTakeOff(false);
+
             }
+            m_runwayTimeToLand = 2*s_runwayTimeToLand;
+            m_requiredTimeOnGround = 2*s_requiredTimeOnGround;
         }
         m_weather = weather;
     }

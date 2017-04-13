@@ -26,6 +26,7 @@ public class SimulatorEngine implements EventHandler {
                 Airport airport = (Airport) ev.getHandler();
 
                 System.out.println("\n\n\n before the weather in :" + airport.getName() +" is "+ Weather.printWeather(airport.getWeather()));
+                System.out.println(((AirportEvent)ev).getPlane().getName());
                 airport.setWeather(Weather.change(airport.getWeather()));
                 System.out.println("now the weather in :" + airport.getName() +" is "+Weather.printWeather(airport.getWeather()));
             }
