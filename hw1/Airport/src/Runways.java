@@ -100,6 +100,7 @@ public class Runways {
                 System.out.println(String.format("%.2f",Simulator.getCurrentTime()) + ":" + plane.getName()+ " departs from airport " + m_airport.getName());
                 AirportEvent arriveEvent = new AirportEvent(flightTime, plane.getDestination(), AirportEvent.PLANE_ARRIVES, plane);
                 m_freeToTakeOff = true;
+                plane.clearRunway();
                 return arriveEvent;
 
         }

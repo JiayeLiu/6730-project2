@@ -15,10 +15,20 @@ public class SimulatorEngine implements EventHandler {
     }
 
     void run() {
+        Weather weather = new Weather(Weather.SUMMER);
         m_running = true;
         while(m_running && !m_eventList.isEmpty()) {
             Event ev = m_eventList.pollFirst();
             m_currentTime = ev.getTime();
+
+            if (ev.getHandler() instanceof Airport) {
+
+                Airport airport = (Airport) ev.getHandler();
+
+                System.out.println("\n\n\n before the weather in :" + airport.getName() +" is "+ Weather.printWeather(airport.getWeather()));
+                airport.setWeather(Weather.change(airport.getWeather()));
+                System.out.println("now the weather in :" + airport.getName() +" is "+Weather.printWeather(airport.getWeather()));
+            }
             ev.getHandler().handle(ev);
         }
     }

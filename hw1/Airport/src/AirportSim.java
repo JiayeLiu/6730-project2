@@ -1,5 +1,8 @@
 //YOUR NAME HERE
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -7,13 +10,35 @@ public class AirportSim {
     public static Airport[] airportList;
 
     public static void main(String[] args) {
+//        String csvFile = "airport.csv";
+//        String line = "";
+//        String csvsplit = ",";
+//        String[] airport_name = new String[100];
+//        try(BufferedReader br = new BufferedReader(new FileReader(csvFile)))
+//        {
+//            int i = 0;
+//            while ((line = br.readLine())!= null)
+//            {
+//                String[] temp = line.split(csvsplit);
+//                airport_name[i] = temp[0];
+//                i++;
+//
+//
+//            }
+//
+//        }
+//        catch (IOException e)
+//        {
+//            e.printStackTrace();
+//        }
+
 
         airportList = new Airport[2];
 //        ArrayList<Airplane> airplaneList = new ArrayList<Airplane>();
 
-        Airport lax = new Airport("LAX", 5, 7, 5, 5, 2);
+        Airport lax = new Airport("LAX", 5, 7, 5, 5, 2, Weather.Typhoon);
         airportList[0] = lax;
-        Airport atl = new Airport("ATL", 3, 2, 1, 2, 2);
+        Airport atl = new Airport("ATL", 3, 2, 1, 2, 2, Weather.Typhoon);
         airportList[1] = atl;
 
         //Airport fll = new Airport("FLL", 10,5, 80, 26, 2);

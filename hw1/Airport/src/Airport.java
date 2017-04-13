@@ -21,6 +21,8 @@ public class Airport implements EventHandler {
     private double m_flightTime;
     private double m_runwayTimeToLand;
     private double m_requiredTimeOnGround;
+    private double s_runwayTimeToLand;
+    private double s_requiredTimeOnGround;
 
     private String m_airportName;
 
@@ -28,19 +30,21 @@ public class Airport implements EventHandler {
     private LinkedList<AirportEvent> m_waitToLand = new LinkedList<AirportEvent>();     //runway attribute
 
     private Runways[] m_runwaylist;
+    private int m_weather = -1;
 
-    public Airport(String name, double runwayTimeToLand, double requiredTimeOnGround, double longitude, double latitude, int numRunways) {
+    public Airport(String name, double runwayTimeToLand, double requiredTimeOnGround, double longitude, double latitude, int numRunways, int weather) {
         m_airportName = name;
         m_numPassArrive = 0;
         m_numPassDepart = 0;
         m_circlingTime = 0;
-        m_runwayTimeToLand = runwayTimeToLand;
-        m_requiredTimeOnGround = requiredTimeOnGround;
+        s_runwayTimeToLand = runwayTimeToLand;
+        s_requiredTimeOnGround = requiredTimeOnGround;
         m_longitude = longitude;
         m_latitude = latitude;
         m_numRunways = numRunways;
         m_runwaylist = new Runways[numRunways];
         setRunways(numRunways);
+        setWeather(weather);
 
     }
 
@@ -80,6 +84,7 @@ public class Airport implements EventHandler {
                 plane.setArriveTime(Simulator.getCurrentTime());
 
                 int i;
+
                 for (i=0; i<m_numRunways;i++){
                     runway = m_runwaylist[i];
 
@@ -214,6 +219,33 @@ public class Airport implements EventHandler {
     public double getRequiredTimeOnGround() {return m_requiredTimeOnGround;}
 
     public double getFlightTime() {return m_flightTime; }
+
+    public int getWeather() {return m_weather;}
+
+    public void setWeather(int weather) {
+        if (m_weather == Weather.Typhoon){
+            for (int i=0; i<m_numRunways; i++){
+                m_runwaylist[i].setFreeToLand(true);
+                m_runwaylist[i].setFreeToTakeOff(true);
+            }
+        }
+
+        if (weather == Weather.Rainy){
+            m_runwayTimeToLand = 2* s_runwayTimeToLand;
+            m_requiredTimeOnGround = 2* s_requiredTimeOnGround;
+        }
+        else if (weather == Weather.Sunny){
+            m_runwayTimeToLand = s_runwayTimeToLand;
+            m_requiredTimeOnGround = s_requiredTimeOnGround;
+        }
+        else {
+            for (int i=0; i<m_numRunways; i++){
+                m_runwaylist[i].setFreeToLand(false);
+                m_runwaylist[i].setFreeToTakeOff(false);
+            }
+        }
+        m_weather = weather;
+    }
 
 
 
