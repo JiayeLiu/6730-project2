@@ -46,12 +46,14 @@ public class Runways {
                 // set the runway to land
                 plane.setRunway(this);
 
-                // declare a landedevent
-                AirportEvent landedEvent = new AirportEvent(m_airport.getRunwayTimeToLand(), m_airport, AirportEvent.PLANE_LANDED, plane);
+
                 System.out.println(String.format("%.2f",Simulator.getCurrentTime()) + ": "+ plane.getName()+" arrived at airport " + m_airport.getName());
 
                 // occupy the runway to land
                 m_freeToLand = false;
+
+                // declare a landedevent
+                AirportEvent landedEvent = new AirportEvent(m_airport.getRunwayTimeToLand(), m_airport, AirportEvent.PLANE_LANDED, plane);
                 return landedEvent;
 
 
@@ -82,32 +84,43 @@ public class Runways {
                     plane.setArriveTime(0);
                 }
 
+                // after landing, clear the runway
                 plane.clearRunway();
+
                 System.out.println(String.format("%.2f",Simulator.getCurrentTime()) + ":" + plane.getName()+ " lands at airport " + m_airport.getName());
+
+                // declare a departure event
                 AirportEvent departureEvent = new AirportEvent(m_airport.getRequiredTimeOnGround(), m_airport, AirportEvent.PLANE_DEPARTS, plane);
 
                 return departureEvent;
 
 
+            // depart to arrive in other airports
             case AirportEvent.PLANE_DEPARTS:
-                // stats on the number of passengers departing
 
+                // set the number of passengers departing to the airport
                 m_airport.setNumPassDepart(plane.getNumPassengers());
 
                 // compute the flight time of next flight
                 double flightTime = plane.getDistance()/plane.getSpeed();
 
                 System.out.println(String.format("%.2f",Simulator.getCurrentTime()) + ":" + plane.getName()+ " departs from airport " + m_airport.getName());
-                AirportEvent arriveEvent = new AirportEvent(flightTime, plane.getDestination(), AirportEvent.PLANE_ARRIVES, plane);
+
+                // free the depart runway
                 m_freeToTakeOff = true;
+
+                // clear the runway of the plane
                 plane.clearRunway();
+
+                // declare an arrive event
+                AirportEvent arriveEvent = new AirportEvent(flightTime, plane.getDestination(), AirportEvent.PLANE_ARRIVES, plane);
                 return arriveEvent;
 
         }
-        System.out.println("I'm writing null!!!!!");
         return null;
     }
 
+    // get the runway id
     public int getId() {return m_id;}
 
 }

@@ -33,19 +33,21 @@ public class AirportSim {
 //        }
 
 
-        airportList = new Airport[2];
+        airportList = new Airport[4];
 //        ArrayList<Airplane> airplaneList = new ArrayList<Airplane>();
 
-        Airport lax = new Airport("LAX", 5, 7, 5, 5, 2, Weather.Typhoon);
+        Airport lax = new Airport("LAX", 5, 7, 5, 5, 4, Weather.Typhoon);
         airportList[0] = lax;
-        Airport atl = new Airport("ATL", 3, 2, 1, 2, 2, Weather.Typhoon);
+        Airport atl = new Airport("ATL", 3, 2, 1, 2, 4, Weather.Typhoon);
         airportList[1] = atl;
+        Airport abc = new Airport("ABC", 5, 10, 3, 8, 5, Weather.Typhoon);
+        airportList[2] = abc;
 
 
 
-        int numberPlanes = 10;
+        int numberPlanes = 60;
         double meanSpeed = 500, stdSpeed = 100;
-        int max = 2;
+        int max = 3;
         Random rand = new Random(1);
         for (int i =1; i<= numberPlanes; i++){
             int speed = (int)(rand.nextGaussian()*stdSpeed+meanSpeed);
@@ -61,18 +63,6 @@ public class AirportSim {
             Simulator.schedule(arriveEvent);
         }
 
-//        int speed =5;
-//        Airplane plane = new Airplane("plane"+1, airportList[0], airportList[1], 200, speed);
-//        AirportEvent arriveEvent1 = new AirportEvent(0, plane.getDestination(),AirportEvent.PLANE_ARRIVES, plane);
-//        Simulator.schedule(arriveEvent1);
-//
-//        Airplane plane2 = new Airplane("plane"+2, airportList[0], airportList[1], 200, speed);
-//        AirportEvent arriveEvent2 = new AirportEvent(0, plane2.getDestination(),AirportEvent.PLANE_ARRIVES, plane2);
-//        Simulator.schedule(arriveEvent2);
-//
-//        Airplane plane3 = new Airplane("plane"+3, airportList[0], airportList[1], 200, speed);
-//        AirportEvent arriveEvent3 = new AirportEvent(0, plane3.getDestination(),AirportEvent.PLANE_ARRIVES, plane3);
-//        Simulator.schedule(arriveEvent3);
 
         Simulator.stopAt(100);
         Simulator.run();

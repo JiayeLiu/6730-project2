@@ -21,14 +21,13 @@ public class SimulatorEngine implements EventHandler {
             Event ev = m_eventList.pollFirst();
             m_currentTime = ev.getTime();
 
+            // each event triggers the weather change
+            // if the event handler is airport (not sim engine)
             if (ev.getHandler() instanceof Airport) {
-
+                // cast the event handler to airport
                 Airport airport = (Airport) ev.getHandler();
-
-                System.out.println("\n\n\n before the weather in :" + airport.getName() +" is "+ Weather.printWeather(airport.getWeather()));
-                System.out.println(((AirportEvent)ev).getPlane().getName());
+                // set the weather of airport
                 airport.setWeather(Weather.change(airport.getWeather()));
-                System.out.println("now the weather in :" + airport.getName() +" is "+Weather.printWeather(airport.getWeather()));
             }
             ev.getHandler().handle(ev);
         }
